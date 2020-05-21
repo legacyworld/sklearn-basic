@@ -1,4 +1,4 @@
-#各種ライブラリのImport
+# 第3回　56分40秒あたり
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,35 +25,36 @@ X_plot = x_plot.reshape(-1,1)
 
 # 多項式用のデータ
 # 次数決め打ち
-pf = PF(degree=5)
-x_poly = pf.fit_transform(X_tr)
-x_plot_poly = pf.fit_transform(X_plot)
+degree = 5
+pf = PF(degree=degree)
+X_poly = pf.fit_transform(X_tr)
+X_plot_poly = pf.fit_transform(X_plot)
 
 model = linear_model.LinearRegression()
-model.fit(x_poly,y_tr)
-
+model.fit(X_poly,y_tr)
 fig = plt.figure()
 plt.scatter(x_tr,y_tr)
-plt.plot(x_plot,model.predict(x_plot_poly))
-plt.plot(x_plot,np.sin(x_plot))
-fig.savefig('test.png')
+plt.plot(x_plot,model.predict(X_plot_poly),label="training Samples")
+plt.plot(x_plot,np.sin(x_plot),label="f(x),ground truth")
+plt.legend()
+fig.savefig(f"{degree}.png")
 
 # 多項式用のデータ
-# 全ての次数
+# 全ての次数、交差検証無し
 fig = plt.figure()
-plt.scatter(x_tr,y_tr)
-
+plt.scatter(x_tr,y_tr,label="Training Samples")
 plt.plot(x_plot,np.sin(x_plot))
 
 for degree in range(1,NUM_TR):
     pf = PF(degree=degree)
-    x_poly = pf.fit_transform(X_tr)
-    x_plot_poly = pf.fit_transform(X_plot)
+    X_poly = pf.fit_transform(X_tr)
+    X_plot_poly = pf.fit_transform(X_plot)
     model = linear_model.LinearRegression()
-    model.fit(x_poly,y_tr)
-    plt.plot(x_plot,model.predict(x_plot_poly),label=f"degree {degree}")
+    model.fit(X_poly,y_tr)
+    plt.plot(x_plot,model.predict(X_plot_poly),label=f"degree {degree}")
     plt.legend()
+    print(f"degree = {degree}\n{X_poly}")
 
 plt.xlim(0,10)
 plt.ylim(-2,2)
-fig.savefig('test.png')
+fig.savefig('all_degree.png')
