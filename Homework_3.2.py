@@ -1,3 +1,4 @@
+# 課題 3.2 多項式単回帰の訓練誤差とテスト誤差
 # 第4回(1) 40分あたり
 import pandas as pd
 import numpy as np
@@ -21,13 +22,11 @@ x_plot = np.linspace(0,1,100)
 # 訓練データ
 x_tr = np.sort(np.random.rand(n_samples))
 y_tr = true_f(x_tr) + np.random.randn(n_samples) * 0.1
-
 # Matrixへ変換
 X_tr = x_tr.reshape(-1,1)
 X_plot = x_plot.reshape(-1,1)
 
 for degree in range(1,DEGREE+1):
-    fig = plt.figure()
     plt.scatter(x_tr,y_tr,label="Training Samples")
     plt.plot(x_plot,true_f(x_plot),label="True")
     plt.xlim(0,1)
@@ -42,6 +41,7 @@ for degree in range(1,DEGREE+1):
     y_predict = pipeline.predict(X_tr)
     mse = mean_squared_error(y_tr,y_predict)
     scores = cross_val_score(pipeline,X_tr,y_tr,scoring="neg_mean_squared_error",cv=10)
-    plt.title(f"Degree: {degree} TrainErr: {mse:.2e} TestErr: {scores.mean():.2e}(+/- {scores.std():.2e}")
+    plt.title(f"Degree: {degree} TrainErr: {mse:.2e} TestErr: {-scores.mean():.2e}(+/- {scores.std():.2e})")
     plt.legend()
-    fig.savefig(filename)
+    plt.savefig(filename)
+    plt.clf()
