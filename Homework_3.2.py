@@ -32,7 +32,7 @@ for degree in range(1,DEGREE+1):
     plt.xlim(0,1)
     plt.ylim(-2,2)
     filename = f"{degree}.png"
-    pf = PF(degree=degree)
+    pf = PF(degree=degree,include_bias=False)
     linear_reg = linear_model.LinearRegression()
     steps = [("Polynomial_Features",pf),("Linear_Regression",linear_reg)]
     pipeline = Pipeline(steps=steps)
