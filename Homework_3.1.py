@@ -26,7 +26,7 @@ X_plot = x_plot.reshape(-1,1)
 
 # 多項式用のデータ
 # 次数決め打ち
-degree = 1
+degree = 5
 pf = PF(degree=degree)
 X_poly = pf.fit_transform(X_tr)
 X_plot_poly = pf.fit_transform(X_plot)
