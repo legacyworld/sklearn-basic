@@ -6,8 +6,10 @@
 # Usage
 
 Change the directory (/home/hoge/source/wine) to your full path in .devcontainer/devcontainer.json
+
 `"workspaceMount": "source=/home/hoge/source/wine,target=/workspace,type=volume",`
 
 `docker-compose -f docker-compose.yml -f ./devcontainer/docker-compose.yml`
+
 Attache VS Code
 
