@@ -16,7 +16,7 @@ class MyEstimator(BaseEstimator):
         self.loss = []
     # fit()を実装
     def fit(self, X, y):
-        self.coef_ = self.grad_desc(X,y)
+        self.coef_ = self.stochastic_grad_desc(X,y)
         # fit は self を返す
         return self
 
@@ -24,24 +24,44 @@ class MyEstimator(BaseEstimator):
     def predict(self, X):
         return np.dot(X, self.coef_)
 
-    def grad_desc(self,X,y):
+    def shuffle(self,X,y):
+        r = np.random.permutation(len(y))
+        return X[r],y[r]
+
+    def stochastic_grad_desc(self,X,y):
         m = len(y)
         loss = []
-        diff = 10**(10)
-        ep = self.ep
         # 特徴量の種類
         dim = X.shape[1]
         # betaの初期値
         beta = np.ones(dim).reshape(-1,1)
         eta = self.eta
         l = self.l
-        while abs(diff) > ep:
-            loss.append((1/(2*m))*np.sum(np.square(np.dot(X,beta)-y)))
-            beta = beta*(1-2*l*eta) - eta*(1/m)*np.dot(X.T,(np.dot(X,beta)-y))
-            if len(loss) > 1:
-                diff = loss[len(loss)-1] - loss[len(loss)-2]
-        self.loss = loss
-        return beta
+        X_shuffle, y_shuffle = self.shuffle(X,y)
+        # T回改善されなければ終了
+        T = 100
+        # 改善されない回数
+        not_improve = 0
+        # 目的関数最小値初期値
+        min = 10 ** 9
+        while True:
+            for Xi,yi in zip(X_shuffle,y_shuffle):
+                loss.append((1/(2*m))*np.sum(np.square(np.dot(X,beta)-y)))
+                beta = beta*(1-2*l*eta) - eta*Xi.reshape(-1,1)*(np.dot(Xi,beta)-yi)
+                if loss[len(loss)-1] < min:
+                    min = loss[len(loss)-1]
+                    min_beta = beta
+                    not_improve = 0
+                else:
+                    # 目的関数の最小値が更新されない場合
+                    not_improve += 1
+                    if not_improve >= T:
+                        break
+            # 全サンプル終わったがT回以内に最小値が変わっている場合再度ループ
+            if not_improve >= T:
+                self.loss = loss
+                break
+        return min_beta
 
 #scikit-leanよりワインのデータをインポートする
 df= pd.read_csv('winequality-red.csv',sep=';')
@@ -53,7 +73,7 @@ scaler = preprocessing.StandardScaler()
 X_fit = scaler.fit_transform(X)
 X_fit = sm.add_constant(X_fit) #最初の列に1を加える
 epsilon = 10 ** (-7)
-eta_list = [0.3,0.1,0.03]
+eta_list = [0.03,0.01,0.003]
 loss = []
 coef = []
 for eta in eta_list:
@@ -70,7 +90,7 @@ for eta in eta_list:
             coef = myest.coef_
         l = l * 10**(0.5)
     plt.plot(loss,label=f"$\eta$={eta}")
-    print(f"eta = {eta} : iter = {len(loss)}, loss = {loss[-1]}, lambda = {l_min}")
+    print(f"eta = {eta} : iter = {len(loss)}, loss = {loss[-1]}, lambda = {l_min}, TestErr = {test_min}")
     # 係数の出力　一番最初に切片が入っているので2つ目から取り出して、最後に切片を出力
     i = 1
     for column in df1.columns:
@@ -78,4 +98,4 @@ for eta in eta_list:
         i+=1
     print('intercept',coef[0][0])
 plt.legend()
-plt.savefig("gd.png")
+plt.savefig("sgd.png")
