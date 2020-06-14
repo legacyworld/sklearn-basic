@@ -82,7 +82,7 @@ for i in range(0,110,10):
 # Cを0.01から1,000まで変えた時のAUCスコア
 c_values = [0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,100,1000]
 aucs = []
-# TRAIN/VALICATION/TEST用に3分割
+# TRAIN/VALIDATION/TEST用に3分割
 X_tr_val,X_test,y_tr_val,y_test = train_test_split(X,y,test_size=0.2,random_state=1)
 X_tr,X_val,y_tr,y_val = train_test_split(X_tr_val,y_tr_val,test_size=0.2,random_state=1)
 
@@ -96,7 +96,7 @@ for c_value in c_values:
 best_c_index = np.argmax(aucs)
 best_clf = svm.SVC(kernel='linear', C=c_values[best_c_index]).fit(X_tr_val,y_tr_val)
 test_predict = best_clf.predict(X_test)
-print(f"Best value of parameter C c_values[best_c_index]")
+print(f"Best value of parameter C {c_values[best_c_index]}")
 print(f"Accuracy on the test data {metrics.accuracy_score(y_test,test_predict)}")
 
 plt.clf()

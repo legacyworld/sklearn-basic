@@ -64,7 +64,7 @@ def learn_test_plot(clf_models):
             ax[index].scatter(X_tr_val[:,0],X_tr_val[:,1],c=y_tr_val,edgecolors='k',cmap=ListedColormap(['#FF0000','#0000FF']))
             ax[index].set_title(f"Training Accuracy = {train_acc} C = {c_value}")
 
-            ax[index+3].contourf(XX, YY, Z,levels=[-2,-1,-0.5,0.5,1,2],colors=[red_rgb+(0.5,),red_rgb+(0.3,),(1,1,1),blue_rgb+(0.3,),blue_rgb+(0.5,)],extend='both')
+            ax[index+3].contourf(XX, YY, Z,levels=[-2,-1,-0.1,0.1,1,2],colors=[red_rgb+(0.5,),red_rgb+(0.3,),(1,1,1),blue_rgb+(0.3,),blue_rgb+(0.5,)],extend='both')
             ax[index+3].contour(XX,YY,Z,levels=[0],linestyles=["--"])
             ax[index+3].scatter(X_test[:,0],X_test[:,1],c=y_test,edgecolors='k',cmap=ListedColormap(['#FF0000','#0000FF']))
             ax[index+3].set_title(f"Test Accuracy = {test_acc} C = {c_value}")
