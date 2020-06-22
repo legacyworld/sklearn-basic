@@ -3,7 +3,8 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import preprocessing
+from sklearn import preprocessing,metrics
+from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator
 import statsmodels.api as sm
 from sklearn.datasets import load_iris  
@@ -72,7 +73,6 @@ for index,eta in enumerate(eta_list):
     myest.fit(X_fit,y,"GD")
     ax[index].plot(myest.loss)
     ax[index].set_title(f"Optimization with Gradient Descent\nStepsize = {eta}\nIterations:{len(myest.loss)}; Initial Cost is:{myest.loss[0]:.3f}; Final Cost is:{myest.loss[-1]:.6f}")
-    print(myest.coef_)
 plt.tight_layout()    
 plt.savefig(f"7.3GD.png")
 
@@ -80,6 +80,12 @@ plt.savefig(f"7.3GD.png")
 myest.fit(X_fit,y,"newton")
 plt.clf()
 plt.plot(myest.loss) 
-print(myest.coef_)   
 plt.title(f"Optimization with Newton Method\nInitial Cost is:{myest.loss[0]:.3f}; Final Cost is:{myest.loss[-1]:.6f}")
 plt.savefig("7.3Newton.png")
+
+# sklearnのLogisticRegressionによる結果
+X_fit = scaler.fit_transform(X)
+clf = LogisticRegression(penalty='none')
+clf.fit(X_fit,y)
+print(f"accuracy_score = {metrics.accuracy_score(clf.predict(X_fit),y)}")
+print(f"coef = {clf.coef_} intercept = {clf.intercept_}")
